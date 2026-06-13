@@ -1,99 +1,92 @@
-from models.emergency_state import EmergencyState
+import asyncio
+from contextlib import asynccontextmanager
 
-from agents.analyzer import analyze
-from agents.allocator import find_hospitals
-from agents.dispatcher import generate_dispatch
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+
+from app.api.routes.emergency import router as emergency_router
+from app.api.routes.simulation import router as simulation_router
+from app.api.routes.websocket import router as websocket_router
+from app.config import get_settings
+from app.schemas.telemetry import TelemetryMessage
+from app.services.telemetry_simulator import telemetry_simulator
+from app.services.websocket_manager import ws_manager
+
+_telemetry_task: asyncio.Task | None = None
 
 
-def main():
+async def _telemetry_broadcast_loop() -> None:
+    settings = get_settings()
+    interval = settings.telemetry_interval_sec
 
-    state = EmergencyState(
-        peak_g_force=8.4,
-        velocity_kmh=110,
+    while True:
+        try:
+            if not ws_manager.emergency_active and ws_manager._connections:
+                trains = telemetry_simulator.tick()
+                await ws_manager.broadcast(
+                    TelemetryMessage(
+                        type="TELEMETRY",
+                        trains=trains,
+                        emergency_active=False,
+                        weather_active=telemetry_simulator.weather_active,
+                    )
+                )
+        except Exception:
+            pass
+        await asyncio.sleep(interval)
 
-        lat=26.4499,
-        lon=80.3319,
 
-        temperature=32,
-        humidity=85,
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    global _telemetry_task
+    telemetry_simulator.load_from_static_data()
+    _telemetry_task = asyncio.create_task(_telemetry_broadcast_loop())
+    yield
+    if _telemetry_task:
+        _telemetry_task.cancel()
+        try:
+            await _telemetry_task
+        except asyncio.CancelledError:
+            pass
 
-        obstacle_distance=20
-        )
 
-    state = analyze(state)
+def create_app() -> FastAPI:
+    settings = get_settings()
 
-    state = find_hospitals(state)
-
-    state = generate_dispatch(state)
-
-    print("=" * 50)
-    print("RAILMIND AI EMERGENCY RESPONSE")
-    print("=" * 50)
-
-    print(
-        f"\nSeverity: {state.severity}"
+    application = FastAPI(
+        title="RailMind AI Backend",
+        description="Digital twin telemetry + emergency multi-agent response API",
+        version="1.0.0",
+        lifespan=lifespan,
     )
 
-    print(
-    f"Risk Score: {state.risk_score}"
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
-    print(
-        f"Confidence: {state.confidence}%"
-    )
+    application.include_router(emergency_router)
+    application.include_router(simulation_router)
+    application.include_router(websocket_router)
 
-    print("\nANALYSIS REASONING")
+    @application.get("/", include_in_schema=False)
+    async def root():
+        return RedirectResponse(url="/docs")
 
-    print("-" * 50)
+    @application.get("/health")
+    async def health() -> dict:
+        return {
+            "status": "ok",
+            "emergency_active": ws_manager.emergency_active,
+            "trains_loaded": len(telemetry_simulator.trains),
+            "websocket_clients": len(ws_manager._connections),
+        }
 
-    for reason in state.reasoning:
-
-        print(f"- {reason}")
-
-    print("\nNearby Hospitals:")
-
-    for idx, hospital in enumerate(
-        state.hospitals,
-        start=1
-    ):
-        print(
-            f"{idx}. {hospital['name']}"
-        )
-
-    print("\nPATIENT ALLOCATION")
-
-    print("-" * 50)
-
-    for allocation in state.allocations:
-
-        print(
-            f"{allocation['hospital']} -> "
-            f"{allocation['assigned_patients']} patients "
-            f"({allocation['ambulances_dispatched']} ambulances)"
-        )
-
-    print("\nDISPATCH REPORT")
-    print("-" * 50)
-
-    print(
-        f"Priority Level: "
-        f"{state.priority_level}"
-    )
-
-    print(
-        f"Response Time: "
-        f"{state.response_time}"
-    )
-
-    print(
-        f"Total Ambulances: "
-        f"{state.total_ambulances}"
-    )
-
-    print("-" * 50)
-
-    print(state.dispatch_report)
+    return application
 
 
-if __name__ == "__main__":
-    main()
+app = create_app()

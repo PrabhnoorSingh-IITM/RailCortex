@@ -1,10 +1,9 @@
 import os
+
 import joblib
 import pandas as pd
 
-BASE_DIR = os.path.dirname(
-    os.path.dirname(__file__)
-)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 severity_model_path = os.path.join(
     BASE_DIR,

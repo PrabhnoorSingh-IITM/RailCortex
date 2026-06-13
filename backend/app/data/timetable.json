@@ -1,0 +1,32 @@
+{
+  "corridor": "delhi_lucknow",
+  "trains": [
+    {
+      "train_id": "RAJ-12345",
+      "name": "Rajdhani Express",
+      "route_color": [0, 200, 80],
+      "default_path_id": "delhi_lucknow_main",
+      "alternate_path_id": "delhi_lucknow_alt",
+      "platform": 1,
+      "speed_kmh": 110
+    },
+    {
+      "train_id": "SHR-67890",
+      "name": "Shatabdi Express",
+      "route_color": [0, 120, 255],
+      "default_path_id": "lucknow_kanpur",
+      "alternate_path_id": "lucknow_kanpur_alt",
+      "platform": 2,
+      "speed_kmh": 95
+    },
+    {
+      "train_id": "GAR-11223",
+      "name": "Garib Rath",
+      "route_color": [255, 180, 0],
+      "default_path_id": "kanpur_allahabad",
+      "alternate_path_id": "kanpur_allahabad_alt",
+      "platform": 3,
+      "speed_kmh": 85
+    }
+  ]
+}
