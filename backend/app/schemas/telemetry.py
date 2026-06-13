@@ -10,6 +10,8 @@ class TrainTripPayload(BaseModel):
     timestamps: list[float]
     current_index: int = 0
     delay_offset: float = 0.0
+    speed_kmh: float = 0.0
+    platform: int = 0
 
 
 class TelemetryMessage(BaseModel):

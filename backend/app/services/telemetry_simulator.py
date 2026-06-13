@@ -30,6 +30,8 @@ class TrainState:
             timestamps=adjusted_timestamps,
             current_index=self.current_index,
             delay_offset=self.delay_offset,
+            speed_kmh=self.speed_kmh,
+            platform=self.platform,
         )
 
 
