@@ -23,17 +23,18 @@ async def _telemetry_broadcast_loop() -> None:
     while True:
         try:
             if not ws_manager.emergency_active and ws_manager._connections:
-                trains = telemetry_simulator.tick()
+                telemetry_simulator.step()
+                state = telemetry_simulator.get_current_state()
                 await ws_manager.broadcast(
                     TelemetryMessage(
                         type="TELEMETRY",
-                        trains=trains,
+                        trains=state["trains"],
                         emergency_active=False,
-                        weather_active=telemetry_simulator.weather_active,
+                        weather_active=state["weather_active"],
                     )
                 )
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Error in broadcast loop: {e}")
         await asyncio.sleep(interval)
 
 

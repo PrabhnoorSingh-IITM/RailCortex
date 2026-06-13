@@ -1,12 +1,12 @@
 import React from 'react';
-import { Train, CloudRain, AlertTriangle } from 'lucide-react';
+import { Train, CloudRain, AlertTriangle, History, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useAppStore from '../../store/useAppStore';
 
 import { injectWeather, triggerEmergency, resetSimulation, resetEmergency } from '../../lib/api';
 
 export default function TopCommandBar() {
-  const { isEmergencyMode, isSimulating, trains } = useAppStore();
+  const { isEmergencyMode, isSimulating, trains, setHistoryModalOpen } = useAppStore();
 
   const handleInjectRain = async () => {
     try {
@@ -56,18 +56,18 @@ export default function TopCommandBar() {
   };
 
   return (
-    <div className="h-[10vh] min-h-[70px] bg-surface/80 backdrop-blur-xl border-b border-white/10 flex items-center justify-between px-6 z-50 relative shadow-lg">
+    <div className="h-[10vh] min-h-[70px] bg-black/40 backdrop-blur-2xl border-b border-white/10 flex items-center justify-between px-6 z-50 relative shadow-2xl">
       
-      {/* Left Group (Brand & Status) */}
+      {/* Logo and Branding */}
       <div className="flex items-center space-x-6">
-        <Link to="/" className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity">
-          <Train className="h-8 w-8 text-primary" style={{ filter: 'drop-shadow(0 0 8px rgba(59,130,246,0.8))' }} />
+        <Link to="/" className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition-opacity group">
+          <Train className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
           <span className="text-xl tracking-tight">
-            <span className="font-bold text-white">RAILCORTEX</span>
+            <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">RAILCORTEX</span>
           </span>
         </Link>
 
-        {/* Status Pill */}
+        {/* Current Mode Indicator */}
         {!isEmergencyMode ? (
           <div className="flex items-center space-x-2 bg-slate-900 border border-emerald/30 px-4 py-1.5 rounded-full">
             <div className="w-2 h-2 rounded-full bg-emerald animate-pulse shadow-[0_0_8px_#10b981]"></div>
@@ -81,12 +81,21 @@ export default function TopCommandBar() {
         )}
       </div>
 
-      {/* Right Group (Triggers) */}
+      {/* Dashboard Action Buttons */}
       <div className="flex items-center space-x-4">
+        {isEmergencyMode && (
+          <button 
+            onClick={handleReset}
+            className="flex items-center space-x-2 bg-emerald-600/20 hover:bg-emerald-600 border border-emerald-500/50 hover:border-emerald-400 text-emerald-400 hover:text-white px-5 py-2.5 rounded-md text-sm font-bold transition-all shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] animate-pulse"
+          >
+            <span>Reset System</span>
+          </button>
+        )}
+
         <button 
           onClick={handleInjectRain}
           disabled={isEmergencyMode}
-          className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 border border-white/10 hover:border-primary/50 text-slate-300 hover:text-white px-5 py-2.5 rounded-md text-sm font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+          className="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 hover:border-primary/50 text-slate-300 hover:text-white px-5 py-2.5 rounded-md text-sm font-semibold transition-all disabled:opacity-30 disabled:cursor-not-allowed group hover:shadow-[0_0_20px_rgba(59,130,246,0.2)]"
         >
           <CloudRain className="h-4 w-4 text-slate-400 group-hover:text-primary transition-colors" />
           <span>Inject Heavy Rain</span>
@@ -95,11 +104,29 @@ export default function TopCommandBar() {
         <button 
           onClick={handleSimulateDerailment}
           disabled={isEmergencyMode}
-          className="flex items-center space-x-2 bg-orange-600 hover:bg-danger border border-transparent hover:border-red-400 text-white px-5 py-2.5 rounded-md text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] hover:shadow-[0_6px_20px_rgba(239,68,68,0.5)]"
+          className="flex items-center space-x-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 border border-transparent text-white px-5 py-2.5 rounded-md text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed shadow-[0_4px_14px_0_rgba(234,88,12,0.39)] hover:shadow-[0_0_25px_rgba(239,68,68,0.6)] hover:-translate-y-0.5 duration-300"
         >
           <AlertTriangle className="h-4 w-4" />
           <span>Simulate Derailment</span>
         </button>
+
+        <div className="w-px h-8 bg-white/10 mx-2"></div>
+
+        <button 
+          onClick={() => setHistoryModalOpen(true)}
+          className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 hover:border-primary/50 text-slate-300 hover:text-white transition-all shadow-sm"
+          title="Incident History"
+        >
+          <History className="h-5 w-5" />
+        </button>
+
+        <Link 
+          to="/admin/login"
+          className="flex items-center justify-center h-10 w-10 rounded-full bg-slate-800/80 hover:bg-slate-700/80 border border-white/10 hover:border-primary/50 text-slate-300 hover:text-white transition-all shadow-sm"
+          title="Operator Login"
+        >
+          <User className="h-5 w-5" />
+        </Link>
       </div>
 
     </div>

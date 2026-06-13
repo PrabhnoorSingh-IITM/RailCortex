@@ -1,109 +1,140 @@
-import React, { useEffect, useRef } from 'react';
-import { Brain, Calculator, ShieldAlert, GitBranch } from 'lucide-react';
-import anime from 'animejs';
+import React from 'react';
+import { Brain, Calculator, ShieldAlert, Map as MapIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function MathSection() {
-  const sectionRef = useRef(null);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          anime({
-            targets: '.math-item',
-            opacity: [0, 1],
-            translateY: [30, 0],
-            delay: anime.stagger(200),
-            duration: 800,
-            easing: 'easeOutQuad'
-          });
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.2 });
-
-    if (sectionRef.current) observer.observe(sectionRef.current);
-    return () => observer.disconnect();
-  }, []);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50, scale: 0.95 },
+    visible: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 100, damping: 20 } }
+  };
 
   return (
-    <section className="py-24 bg-background relative border-t border-white/5" ref={sectionRef}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Mathematical Foundations</h2>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto">
-            RailCortex is not a wrapper. It uses deep mathematical abstractions to power the Digital Twin and the Agentic Swarm.
-          </p>
-        </div>
+    <section className="py-32 bg-deepslate relative border-t border-white/5 overflow-hidden">
+      {/* Background Math/Code Particles */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
+        <div className="absolute top-20 left-20 text-4xl font-mono text-cyan/30 animate-pulse">∑</div>
+        <div className="absolute bottom-40 right-20 text-5xl font-mono text-danger/30 animate-pulse delay-700">∫</div>
+        <div className="absolute top-1/2 left-1/3 text-6xl font-mono text-primary/20 animate-pulse delay-300">∂</div>
+        <div className="absolute top-1/4 right-1/4 text-3xl font-mono text-emerald/30 animate-pulse delay-500">∇</div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        
+        <motion.div 
+          initial={{ opacity: 0, y: -30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-20"
+        >
+          <div className="inline-block mb-4 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm font-bold tracking-wider uppercase">
+            Theoretical Core
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Mathematical Foundations</h2>
+          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+            RailCortex is not a wrapper. It uses deep mathematical abstractions to power the <strong className="text-white">Digital Twin</strong> and the <strong className="text-white">Agentic Swarm</strong>.
+          </p>
+        </motion.div>
+
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        >
           
-          {/* Card 1: GNN */}
-          <div className="math-item opacity-0 bg-slate-900 border border-white/10 p-8 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.05)] hover:border-primary/50 transition-colors">
-            <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
+          {/* Machine Learning Card */}
+          <motion.div variants={itemVariants} className="group bg-[#080c14] border border-white/10 p-8 rounded-2xl shadow-2xl hover:border-primary/50 transition-all hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all" />
+            <div className="w-14 h-14 bg-primary/20 rounded-xl flex items-center justify-center mb-6 border border-primary/30 group-hover:scale-110 transition-transform">
               <Brain className="h-7 w-7 text-primary" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">SAGE-Het Graph Neural Networks</h3>
-            <p className="text-slate-400 mb-6 line-clamp-4">
-              To predict cascading delays (the "Domino Effect"), standard time-series models fail because they ignore track geography. We use a Spatial-Temporal Heterogeneous Graph (SAGE-Het) to model the network. Delay prediction depends on the aggregated state of upstream trains and adjacent stations.
+            <h3 className="text-2xl font-bold text-white mb-4">Deterministic MILP Optimization</h3>
+            <p className="text-slate-400 mb-6 leading-relaxed">
+              Instead of relying on stochastic LLMs for physical routing, RailCortex uses <strong className="text-white">Mixed-Integer Linear Programming (MILP)</strong> via PuLP. It calculates optimal platform reallocations deterministically, ensuring mathematical bounds and collision-avoidance constraints are never violated.
             </p>
-            <div className="bg-slate-950 p-4 rounded-lg font-mono text-sm text-emerald border border-white/5 overflow-x-auto">
-              <span className="text-slate-500">{"// GraphSAGE Message Passing"}</span>
+            <div className="bg-[#0f172a] p-4 rounded-xl font-mono text-sm text-emerald border border-white/5 overflow-x-auto shadow-inner relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-emerald rounded-l-xl" />
+              <span className="text-slate-500">{"// PuLP MILP Objective"}</span>
               <br/>
-              h_v(k) = σ(W(k) • CONCAT(h_v(k-1), AGG(N(v))))
+              prob <span className="text-white">+=</span> pulp.<span className="text-cyan">lpSum</span>(costs[i][j] <span className="text-cyan">×</span> x[i][j])
+              <br/>
+              prob <span className="text-white">+=</span> (arrival[i] <span className="text-cyan">&gt;=</span> departure[j] + buffer)
             </div>
-          </div>
+          </motion.div>
 
-          {/* Card 2: MILP */}
-          <div className="math-item opacity-0 bg-slate-900 border border-white/10 p-8 rounded-2xl shadow-[0_0_30px_rgba(59,130,246,0.05)] hover:border-warning/50 transition-colors">
-            <div className="w-14 h-14 bg-warning/20 rounded-xl flex items-center justify-center mb-6">
+          {/* Agentic Pipeline Card */}
+          <motion.div variants={itemVariants} className="group bg-[#080c14] border border-white/10 p-8 rounded-2xl shadow-2xl hover:border-warning/50 transition-all hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-warning/10 rounded-full blur-3xl group-hover:bg-warning/20 transition-all" />
+            <div className="w-14 h-14 bg-warning/20 rounded-xl flex items-center justify-center mb-6 border border-warning/30 group-hover:scale-110 transition-transform">
               <Calculator className="h-7 w-7 text-warning" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Mixed-Integer Linear Programming</h3>
-            <p className="text-slate-400 mb-6 line-clamp-4">
-              When the GNN predicts a conflict, the AI cannot use a stochastic LLM to reroute trains (since LLMs can hallucinate). Instead, we solve the Train Platforming Problem (TPP) using exact MILP solvers to guarantee physical safety.
+            <h3 className="text-2xl font-bold text-white mb-4">Autonomous Agentic Swarm</h3>
+            <p className="text-slate-400 mb-6 leading-relaxed">
+              RailCortex leverages a <strong className="text-white">LangGraph</strong> state machine to orchestrate emergency response. Individual agents—Analyzer, Medical, and Dispatcher—act autonomously, assessing the crash, querying OpenStreetMap for hospitals, and allocating ambulances dynamically without human intervention.
             </p>
-            <div className="bg-slate-950 p-4 rounded-lg font-mono text-sm text-warning border border-white/5 overflow-x-auto">
-              <span className="text-slate-500">{"// Objective: Minimize Delays & Penalties"}</span>
+            <div className="bg-[#0f172a] p-4 rounded-xl font-mono text-sm text-warning border border-white/5 overflow-x-auto shadow-inner relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-warning rounded-l-xl" />
+              <span className="text-slate-500">{"// LangGraph State Orchestration"}</span>
               <br/>
-              Minimize Z = Σ (C_delay • Δt_i + C_plat • ρ_i,p) x_i,p,t
+              graph.<span className="text-cyan">add_node</span>(<span className="text-emerald">"analyze"</span>, analyzer_agent)
+              <br/>
+              graph.<span className="text-cyan">add_node</span>(<span className="text-emerald">"allocate"</span>, medical_agent)
             </div>
-          </div>
+          </motion.div>
 
-          {/* Card 3: Kinematics */}
-          <div className="math-item opacity-0 bg-slate-900 border border-white/10 p-8 rounded-2xl shadow-[0_0_30px_rgba(239,68,68,0.05)] hover:border-danger/50 transition-colors">
-            <div className="w-14 h-14 bg-danger/20 rounded-xl flex items-center justify-center mb-6">
+          {/* Kinematics Card */}
+          <motion.div variants={itemVariants} className="group bg-[#080c14] border border-white/10 p-8 rounded-2xl shadow-2xl hover:border-danger/50 transition-all hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-danger/10 rounded-full blur-3xl group-hover:bg-danger/20 transition-all" />
+            <div className="w-14 h-14 bg-danger/20 rounded-xl flex items-center justify-center mb-6 border border-danger/30 group-hover:scale-110 transition-transform">
               <ShieldAlert className="h-7 w-7 text-danger" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Edge Kinematics & Severity Index</h3>
-            <p className="text-slate-400 mb-6 line-clamp-4">
-              The Incident Analyzer Agent calculates the physical severity of a crash. Our custom IoT edge node measures Peak G-Force vectors which are combined with kinetic energy formulas to derive a Severity Index (S). If S exceeds a threshold, the swarm triggers MASS CASUALTY mode.
+            <h3 className="text-2xl font-bold text-white mb-4">Kinematic Risk Analysis</h3>
+            <p className="text-slate-400 mb-6 leading-relaxed">
+              The Incident Analyzer continuously monitors edge sensor data. It calculates an instantaneous risk score by directly multiplying Peak G-Force vectors with train velocity. If anomalies exceed heuristic thresholds (e.g., G-force &gt; 7), <strong className="text-danger">MASS CASUALTY</strong> mode activates.
             </p>
-            <div className="bg-slate-950 p-4 rounded-lg font-mono text-sm text-danger border border-white/5 overflow-x-auto">
-              <span className="text-slate-500">{"// Unified Severity Index"}</span>
+            <div className="bg-[#0f172a] p-4 rounded-xl font-mono text-sm text-danger border border-white/5 overflow-x-auto shadow-inner relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-danger rounded-l-xl" />
+              <span className="text-slate-500">{"// Unified Risk Score"}</span>
               <br/>
-              S = α√(Gx² + Gy² + Gz²) + β(v_initial / Δt_stop)
+              <span className="text-white">Risk</span> = peak_g_force <span className="text-cyan">×</span> velocity_kmh
+              <br/>
+              <span className="text-white">Confidence</span> = 70 + (Risk / 40)
             </div>
-          </div>
+          </motion.div>
 
-          {/* Card 4: Routing */}
-          <div className="math-item opacity-0 bg-slate-900 border border-white/10 p-8 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.05)] hover:border-emerald/50 transition-colors">
-            <div className="w-14 h-14 bg-emerald/20 rounded-xl flex items-center justify-center mb-6">
-              <GitBranch className="h-7 w-7 text-emerald" />
+          {/* Routing Card */}
+          <motion.div variants={itemVariants} className="group bg-[#080c14] border border-white/10 p-8 rounded-2xl shadow-2xl hover:border-emerald/50 transition-all hover:-translate-y-2 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald/10 rounded-full blur-3xl group-hover:bg-emerald/20 transition-all" />
+            <div className="w-14 h-14 bg-emerald/20 rounded-xl flex items-center justify-center mb-6 border border-emerald/30 group-hover:scale-110 transition-transform">
+              <MapIcon className="h-7 w-7 text-emerald" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Dynamic Dijkstra Routing</h3>
-            <p className="text-slate-400 mb-6 line-clamp-4">
-              The Route Planner Agent uses Dijkstra's Algorithm for ambulances, but dynamically adjusts the edge weights based on heavy-vehicle constraints. It mathematically penalizes narrow roads and traffic density to ensure the fastest physical response.
+            <h3 className="text-2xl font-bold text-white mb-4">Geospatial Routing Heuristics</h3>
+            <p className="text-slate-400 mb-6 leading-relaxed">
+              During a crisis, speed is critical. The Medical Agent queries <strong className="text-white">OpenStreetMap</strong> using Haversine formulas to locate nearby trauma centers. The Dispatcher then provisions ambulances via greedy allocation, ensuring capacity constraints are met in real-time.
             </p>
-            <div className="bg-slate-950 p-4 rounded-lg font-mono text-sm text-emerald border border-white/5 overflow-x-auto">
-              <span className="text-slate-500">{"// Edge Weight Adjustment"}</span>
+            <div className="bg-[#0f172a] p-4 rounded-xl font-mono text-sm text-emerald border border-white/5 overflow-x-auto shadow-inner relative">
+              <div className="absolute top-0 left-0 w-1 h-full bg-emerald rounded-l-xl" />
+              <span className="text-slate-500">{"// Haversine Distance Optimization"}</span>
               <br/>
-              c_amb(u,v) = Dist(u,v)/[Speed(u,v)•(1-ρ)] + Penalty(W)
+              <span className="text-white">a</span> = sin²(Δφ/2) + cos φ₁ ⋅ cos φ₂ ⋅ sin²(Δλ/2)
+              <br/>
+              <span className="text-white">Distance</span> = 2R ⋅ arcsin(√a)
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );

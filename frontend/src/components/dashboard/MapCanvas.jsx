@@ -5,7 +5,7 @@ import anime from 'animejs';
 import useAppStore from '../../store/useAppStore';
 import 'leaflet/dist/leaflet.css';
 
-// Fix leaflet default marker icon issue (optional but good practice)
+// Fix leaflet default marker icon issue
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -13,7 +13,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Custom Icons
+// Custom Map Icons
 const createTrainIcon = () => {
   return L.divIcon({
     className: 'custom-train-marker',
@@ -44,10 +44,10 @@ export default function MapCanvas() {
 
   useEffect(() => {
     if (isEmergencyMode && dispatchPlan) {
-      // Trigger ambulance routes after LangGraph terminal is done typing
+      // Show ambulance routes after LangGraph terminal is done typing
       const timer = setTimeout(() => setShowAmbulances(true), 8500);
       
-      // Animate emergency vignette
+      // Animate emergency red vignette overlay
       if (vignetteRef.current) {
         anime({
           targets: vignetteRef.current,
@@ -57,7 +57,7 @@ export default function MapCanvas() {
         });
       }
 
-      // Start custom animejs sonar
+      // Start custom sonar animation for incident marker
       anime({
         targets: '.sonar-ring',
         scale: [1, 3],
@@ -87,7 +87,7 @@ export default function MapCanvas() {
 
   const center = [26.4499, 80.3319]; // Kanpur approx
 
-  // Convert GeoJSON LineStrings to Leaflet LatLng arrays
+  // Convert GeoJSON routes to Leaflet format
   const ambulancePaths = showAmbulances && dispatchPlan && dispatchPlan.ambulance_routes ? 
     dispatchPlan.ambulance_routes.map(route => {
       // route.geometry.coordinates is typically [lon, lat][]
@@ -97,7 +97,7 @@ export default function MapCanvas() {
   return (
     <div className="absolute inset-0 w-full h-full bg-slate-900 z-0 overflow-hidden">
       
-      {/* Red Vignette Overlay for Emergency */}
+      {/* Emergency Red Vignette Overlay */}
       <div 
         ref={vignetteRef}
         className="absolute inset-0 pointer-events-none z-[1000] mix-blend-multiply opacity-0"
@@ -114,6 +114,12 @@ export default function MapCanvas() {
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        />
+        {/* Real Railway Tracks Overlay */}
+        <TileLayer
+          url="https://{s}.tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openrailwaymap.org/">OpenRailwayMap</a>'
+          opacity={0.4}
         />
 
         {/* Train Markers */}

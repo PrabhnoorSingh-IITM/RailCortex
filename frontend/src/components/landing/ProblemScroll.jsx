@@ -1,75 +1,104 @@
-import React, { useEffect, useRef } from 'react';
-import { AlertTriangle, Clock, TrendingDown } from 'lucide-react';
-import anime from 'animejs';
+import React, { useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { AlertTriangle, TrendingDown, CloudRain } from 'lucide-react';
 
 export default function ProblemScroll() {
-  const sectionRef = useRef(null);
+  const containerRef = useRef(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          // Play animation once when scrolled into view
-          anime({
-            targets: '.problem-card',
-            translateY: [50, 0],
-            opacity: [0, 1],
-            delay: anime.stagger(200),
-            duration: 1000,
-            easing: 'easeOutExpo'
-          });
-          observer.disconnect();
-        }
-      });
-    }, { threshold: 0.2 });
+  // We track the scroll progress of this massive 400vh container
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-    return () => observer.disconnect();
-  }, []);
+  // --- Background Grid Scaling ---
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 2]);
+  const bgOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.1, 0.4, 0.4, 0.1]);
 
-  const problems = [
-    {
-      icon: <AlertTriangle className="h-10 w-10 text-danger" />,
-      title: "Delayed Emergency Response",
-      desc: "Traditional rail networks rely on manual phone calls and radio relays during derailments, costing precious minutes when trauma care is needed instantly."
-    },
-    {
-      icon: <TrendingDown className="h-10 w-10 text-orange" />,
-      title: "Cascading Network Delays",
-      desc: "A single track blockage causes a ripple effect. Without global network awareness, dispatchers struggle to optimally reroute trains, leading to massive logistical bottlenecks."
-    },
-    {
-      icon: <Clock className="h-10 w-10 text-primary" />,
-      title: "Static Weather Constraints",
-      desc: "Trains run on fixed schedules that don't adapt to micro-climate changes. Heavy rain or fog isn't accounted for dynamically, reducing safety margins."
-    }
-  ];
+  // --- Frame 1: Intro / Problem 1 ---
+  // Active from 0% to 33%
+  const opacity1 = useTransform(scrollYProgress, [0, 0.1, 0.25, 0.35], [0, 1, 1, 0]);
+  const y1 = useTransform(scrollYProgress, [0, 0.1, 0.25, 0.35], [50, 0, 0, -50]);
+
+  // --- Frame 2: Problem 2 ---
+  // Active from 33% to 66%
+  const opacity2 = useTransform(scrollYProgress, [0.25, 0.4, 0.55, 0.65], [0, 1, 1, 0]);
+  const y2 = useTransform(scrollYProgress, [0.25, 0.4, 0.55, 0.65], [50, 0, 0, -50]);
+
+  // --- Frame 3: Problem 3 ---
+  // Active from 66% to 100%
+  const opacity3 = useTransform(scrollYProgress, [0.55, 0.7, 0.9, 1], [0, 1, 1, 0]);
+  const y3 = useTransform(scrollYProgress, [0.55, 0.7, 0.9, 1], [50, 0, 0, -50]);
 
   return (
-    <section id="problem" className="py-32 bg-slate-900 border-t border-white/5 relative" ref={sectionRef}>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">The Legacy Bottleneck</h2>
-          <p className="text-slate-400 max-w-3xl mx-auto text-lg">
-            Railways are inherently complex physical networks governed by outdated software. We are replacing rigid, siloed systems with an intelligent, self-healing architecture.
+    <section 
+      id="problem" 
+      ref={containerRef} 
+      className="relative h-[400vh] bg-slate-950"
+    >
+      {/* Sticky viewport container */}
+      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+        
+        {/* Apple-style background grid that zooms in as you scroll */}
+        <motion.div 
+          style={{ scale: bgScale, opacity: bgOpacity }}
+          className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#3b82f6_1px,transparent_1px),linear-gradient(to_bottom,#3b82f6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_10%,transparent_100%)] pointer-events-none"
+        />
+
+        {/* --- Frame 1 --- */}
+        <motion.div 
+          style={{ opacity: opacity1, y: y1 }}
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center will-change-transform"
+        >
+          <div className="bg-danger/10 border border-danger/30 p-6 rounded-full mb-8 shadow-[0_0_50px_rgba(239,68,68,0.3)]">
+            <AlertTriangle className="h-16 w-16 text-danger" />
+          </div>
+          <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+            Seconds <span className="text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)]">Cost Lives.</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-slate-400 max-w-3xl leading-relaxed font-light">
+            Traditional networks rely on manual phone calls. Our <strong className="text-white">LangGraph AI Swarm</strong> is triggered by hardware the millisecond an impact occurs, bypassing human latency.
           </p>
+        </motion.div>
+
+        {/* --- Frame 2 --- */}
+        <motion.div 
+          style={{ opacity: opacity2, y: y2 }}
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center will-change-transform"
+        >
+          <div className="bg-orange/10 border border-orange/30 p-6 rounded-full mb-8 shadow-[0_0_50px_rgba(249,115,22,0.3)]">
+            <TrendingDown className="h-16 w-16 text-orange-500" />
+          </div>
+          <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+            Predictive <span className="text-orange-500 drop-shadow-[0_0_10px_rgba(249,115,22,0.8)]">Intelligence.</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-slate-400 max-w-3xl leading-relaxed font-light">
+            We don't just react. We analyze kinematic energy using <strong className="text-white">scikit-learn models</strong> to predict severity and casualties instantly.
+          </p>
+        </motion.div>
+
+        {/* --- Frame 3 --- */}
+        <motion.div 
+          style={{ opacity: opacity3, y: y3 }}
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center px-6 text-center will-change-transform"
+        >
+          <div className="bg-cyan/10 border border-cyan/30 p-6 rounded-full mb-8 shadow-[0_0_50px_rgba(6,182,212,0.3)]">
+            <CloudRain className="h-16 w-16 text-cyan" />
+          </div>
+          <h2 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-tighter">
+            Digital <span className="text-cyan drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]">Twin.</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-slate-400 max-w-3xl leading-relaxed font-light">
+            A live <strong className="text-white">WebSocket</strong> telemetry feed continuously updates train coordinates on a React-Leaflet dashboard in real-time.
+          </p>
+        </motion.div>
+
+        {/* Scroll Indicator at bottom of viewport */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center space-y-2 opacity-50">
+          <span className="text-xs uppercase tracking-[0.3em] text-white">Keep Scrolling</span>
+          <div className="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {problems.map((prob, idx) => (
-            <div key={idx} className="problem-card opacity-0 bg-slate-800/50 border border-slate-700/50 p-8 rounded-xl hover:border-slate-500 transition-colors">
-              <div className="bg-slate-900/50 w-16 h-16 rounded-lg flex items-center justify-center mb-6 border border-white/5 shadow-inner">
-                {prob.icon}
-              </div>
-              <h3 className="text-xl font-bold mb-4">{prob.title}</h3>
-              <p className="text-slate-400 leading-relaxed">
-                {prob.desc}
-              </p>
-            </div>
-          ))}
-        </div>
       </div>
     </section>
   );

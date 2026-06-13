@@ -11,6 +11,7 @@ const useAppStore = create((set, get) => ({
   weatherMessage: '',
   wsConnected: false,
   wsInstance: null,
+  isHistoryModalOpen: false,
 
   // Actions
   setEmergencyMode: (mode) => set({ isEmergencyMode: mode }),
@@ -19,6 +20,7 @@ const useAppStore = create((set, get) => ({
   setTrains: (trains) => set({ trains }),
   setDispatchPlan: (plan) => set({ dispatchPlan: plan }),
   setWeatherMessage: (msg) => set({ weatherMessage: msg }),
+  setHistoryModalOpen: (isOpen) => set({ isHistoryModalOpen: isOpen }),
 
   // WebSocket connection management
   connectWebSocket: () => {

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 border-t border-white/10 pt-16 pb-8">
+    <footer className="bg-[#04060a] border-t border-white/10 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
@@ -24,14 +24,11 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-1">
             <h4 className="text-lg font-bold text-white mb-4">Team NexyByte</h4>
             <ul className="text-slate-400 text-sm space-y-2 mb-4">
-              <li>Prabhnoor Singh</li>
-              <li>Riya Mahajan</li>
-              <li>Harshit</li>
-              <li>Mehakpreet Kaur</li>
+              <li><a href="https://github.com/PrabhnoorSingh-IITM" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-primary transition-colors">Prabhnoor Singh</a> — Frontend Developer & Hardware Engineer</li>
+              <li><a href="https://github.com/IAmHarshit0" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-primary transition-colors">Harshit</a> — AI & ML Engineer</li>
+              <li><a href="https://github.com/Riya379" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-primary transition-colors">Riya Mahajan</a> — Backend Developer</li>
+              <li><a href="https://github.com/MehakKaurPreet" target="_blank" rel="noopener noreferrer" className="text-white font-semibold hover:text-primary transition-colors">Mehakpreet Kaur</a> — UI/UX Designer</li>
             </ul>
-            <p className="text-xs text-slate-500 italic">
-              * See GitHub repo and git tree for individual contributions.
-            </p>
           </div>
 
           {/* Quick Links */}
@@ -49,7 +46,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="mailto:contact@nexybyte.example.com" className="hover:text-primary transition-colors flex items-center space-x-2">
+                <a href="https://github.com/PrabhnoorSingh-IITM/RailCortex/issues/new" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center space-x-2">
                   <Mail className="h-4 w-4" /> <span>Contact Us</span>
                 </a>
               </li>
@@ -72,11 +69,16 @@ export default function Footer() {
               <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">Powered By</p>
               <div className="flex flex-wrap justify-start md:justify-end gap-2 text-xs text-slate-400 font-mono">
                 <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">React</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">FastAPI</span>
                 <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">Python</span>
-                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">LangGraph</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">TailwindCSS</span>
                 <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">Leaflet</span>
-                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">KiCad</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">Anime.js</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">LangGraph</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">scikit-learn</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">PuLP</span>
                 <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">OpenAI</span>
+                <span className="bg-slate-900 px-2 py-1 rounded border border-white/5">Zustand</span>
               </div>
             </div>
           </div>

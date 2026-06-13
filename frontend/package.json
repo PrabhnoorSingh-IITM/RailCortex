@@ -12,6 +12,7 @@
   "dependencies": {
     "animejs": "^3.2.2",
     "deck.gl": "^9.0.15",
+    "framer-motion": "^12.40.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.395.0",
     "maplibre-gl": "^4.7.1",

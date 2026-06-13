@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     mappls_api_key: str = ""
     mapbox_access_token: str = ""
+    
+    rapidapi_key: str = ""
+    rapidapi_host: str = "indianrailapi.p.rapidapi.com"
 
     overpass_api_url: str = "https://overpass-api.de/api/interpreter"
     mappls_routes_url: str = "https://apis.mappls.com/advancedmaps/v1/route_adv/driving"

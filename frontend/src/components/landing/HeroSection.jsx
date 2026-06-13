@@ -50,7 +50,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-deepslate pt-20" ref={containerRef}>
-      {/* Figma: Cinematic Background with Grids and Glowing Nodes */}
+      {/* Background Grids and Glowing Nodes */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:3rem_3rem] hero-grid opacity-0" />
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px]" />
@@ -59,7 +59,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         
-        {/* Badge */}
+        {/* Status Badge */}
         <div className="inline-block hero-badge opacity-0 mb-6">
           <div className="flex items-center space-x-2 bg-slate-800/50 border border-primary/30 rounded-full px-4 py-1.5 backdrop-blur-md">
             <span className="flex h-2 w-2">
@@ -80,10 +80,10 @@ export default function HeroSection() {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-12 hero-subtitle opacity-0">
-          RailCortex fuses edge-deployed LLMs with multi-agent optimization to instantly detect accidents, triage medical resources, and reroute networks. 
+          RailCortex fuses deterministic <strong className="text-white">MILP mathematical routing</strong> with a <strong className="text-white">LangGraph</strong> agentic swarm. It analyzes live <strong className="text-white">WebSocket</strong> telemetry to prevent gridlock via PuLP, instantly detect IoT physical impacts, and autonomously dispatch trauma resources.
         </p>
 
-        {/* Buttons */}
+        {/* Call to Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 hero-buttons opacity-0">
           <a href="#architecture" className="px-8 py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all flex items-center group">
             Explore Architecture
@@ -95,7 +95,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Decorative Data Stream lines */}
+      {/* Decorative vertical lines */}
       <div className="absolute left-10 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-primary/50 to-transparent hero-data-stream opacity-0" />
       <div className="absolute right-10 top-0 bottom-0 w-[1px] bg-gradient-to-b from-transparent via-danger/30 to-transparent hero-data-stream opacity-0" />
     </section>

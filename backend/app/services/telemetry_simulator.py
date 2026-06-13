@@ -46,20 +46,44 @@ class TelemetrySimulator:
         routes = load_json("routes.json")
         self.trains = []
 
+        real_train_numbers = ["12723", "22416", "12724", "12707", "15909", "18242", "11266", "58702", "54703", "07509", "09416", "19417", "09427", "09018", "14804", "04804", "09421", "19130", "02713", "19420"]
+        train_index = 0
+
         for entry in timetable["trains"]:
             route = routes[entry["default_path_id"]]
-            self.trains.append(
-                TrainState(
-                    train_id=entry["train_id"],
-                    name=entry["name"],
-                    route_color=entry["route_color"],
-                    path=copy.deepcopy(route["path"]),
-                    timestamps=copy.deepcopy(route["timestamps"]),
-                    platform=entry["platform"],
-                    speed_kmh=entry["speed_kmh"],
-                    path_id=entry["default_path_id"],
+            # Generate 8 variants per route to simulate a busy network
+            for i in range(8):
+                # Calculate slight spatial offset to make trains look distinct on the map
+                lat_offset = (i * 0.005) * (-1 if i % 2 == 0 else 1)
+                lon_offset = (i * 0.003) * (-1 if i % 3 == 0 else 1)
+                
+                offset_path = [
+                    [lon + lon_offset, lat + lat_offset] 
+                    for lon, lat in route["path"]
+                ]
+                
+                # Vary speed slightly
+                speed_mod = entry["speed_kmh"] + (i * 5)
+                
+                # Vary initial progress
+                prog_offset = i * 25.0
+
+                real_id = real_train_numbers[train_index % len(real_train_numbers)]
+                train_index += 1
+                
+                self.trains.append(
+                    TrainState(
+                        train_id=f"TRN-{real_id}",
+                        name=f"Exp {real_id}",
+                        route_color=[(entry["route_color"][0] + i*20)%255, (entry["route_color"][1] + i*15)%255, (entry["route_color"][2] + i*10)%255],
+                        path=offset_path,
+                        timestamps=copy.deepcopy(route["timestamps"]),
+                        platform=entry["platform"],
+                        speed_kmh=speed_mod,
+                        path_id=entry["default_path_id"],
+                        progress=prog_offset
+                    )
                 )
-            )
 
     def tick(self) -> list[TrainTripPayload]:
         for train in self.trains:

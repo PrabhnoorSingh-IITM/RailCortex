@@ -1,10 +1,18 @@
-# RailCortex
+# 🚄 RailCortex
 
-RailCortex is an autonomous, dual-mode Cyber-Physical System (CPS) engineered to modernize transit operations. It replaces passive tracking with an active cognitive network, bridging the gap between deterministic mathematical optimization, custom physical hardware, and Agentic AI.
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/Python-3.11-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/React-Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Hardware-ESP32-E53935?style=for-the-badge&logo=espressif&logoColor=white" alt="ESP32" />
+  <img src="https://img.shields.io/badge/AI-LangGraph-F39C12?style=for-the-badge" alt="LangGraph" />
+</p>
 
-In its primary state, RailCortex operates as a Level 4 Digital Twin. Powered by a high-performance WebGL rendering engine, it visualizes spatial datasets at 60fps. Rather than relying on human dispatchers to resolve platform conflicts, the system ingests live edge telemetry and utilizes Mixed-Integer Linear Programming (MILP) to deterministically reroute trains, absorbing localized delays before they cascade across the grid.
+RailCortex is an autonomous, dual-mode Cyber-Physical System (CPS) engineered to modernize transit operations. It replaces passive tracking with an active cognitive network, bridging the gap between **deterministic mathematical optimization**, **custom physical hardware**, and **Agentic AI**.
 
-When a physical disaster strikes, RailCortex’s custom-engineered IoT edge node—equipped with an MPU6050 accelerometer, NEO-6M GPS, and environmental sensors—detects the kinetic anomaly and instantly overrides the network. The system transitions into Emergency Response Mode, deploying a rigid, deterministic LangGraph Multi-Agent Swarm.
+In its primary state, RailCortex operates as a **Level 4 Digital Twin**. Powered by a high-performance WebGL rendering engine, it visualizes spatial datasets at 60fps. Rather than relying on human dispatchers to resolve platform conflicts, the system ingests live edge telemetry and utilizes **Mixed-Integer Linear Programming (MILP)** via PuLP to deterministically reroute trains, absorbing localized delays before they cascade across the grid.
+
+When a physical disaster strikes, RailCortex’s custom-engineered IoT edge node—equipped with an MPU6050 accelerometer, NEO-6M GPS, and environmental sensors—detects the kinetic anomaly and instantly overrides the network. The system transitions into **Emergency Response Mode**, deploying a rigid, deterministic **LangGraph Multi-Agent Swarm**.
 
 ---
 
@@ -12,7 +20,7 @@ When a physical disaster strikes, RailCortex’s custom-engineered IoT edge node
 
 ### 1. Normal Operations: The Digital Twin
 A high-performance WebGL spatial dashboard that functions as a Level 4 digital twin of the physical railway infrastructure.
-*   **Live Telemetry Ingestion:** Continuously tracks real-time train movement, velocity, and track congestion parameters.
+*   **Live Telemetry Ingestion:** Continuously tracks real-time train movement, velocity, and track congestion parameters via WebSockets.
 *   **Mathematical Rerouting:** Utilizes Mixed-Integer Linear Programming (MILP) to autonomously calculate platform reallocations and prevent network gridlock during extreme weather anomalies or track blockages.
 *   **GPU-Accelerated Rendering:** Leverages `deck.gl` to render massive spatial datasets (dynamic agents, stations, meteorological overlays) at 60fps without browser latency.
 
@@ -27,12 +35,24 @@ Upon detection of a catastrophic event (e.g., derailment) via the custom IoT har
 ## 🛠️ Technology Stack
 This project strictly avoids simplistic API wrapper methodologies, demonstrating comprehensive engineering execution across hardware, frontend visualization, and algorithmic routing.
 
-*   **Frontend (Visualization):** React.js (Vite) + Tailwind CSS + Framer Motion, `deck.gl` (WebGL2 / WebGPU spatial rendering framework), `react-map-gl` (Mapbox GL JS base maps), Zustand (state management).
-*   **Backend (Cognitive & Routing Engine):** Python 3.11 + FastAPI + WebSockets (for continuous telemetry streaming), PuLP (Python-based MILP solver for deterministic routing), LangGraph + LangChain (Strict state-machine agent orchestration), OpenAI GPT-4o / GPT-4o-mini.
-*   **Hardware Edge Node:** ESP32-WROOM-32 Microcontroller, MPU6050 (Accelerometer/Gyroscope) + NEO-6M (GPS) + BME280 (Meteorological Sensor) + VL53L0X (LiDAR/Time-of-Flight).
-    *   *PCB Engineering:* Custom schematics and Gerber files designed in KiCad 8.0.
-    *   *CAD Enclosure:* 3D-printed housing parametrically modeled in Autodesk Fusion 360.
-    *(Note: Hardware schematics, Gerber files, and CAD deliverables are located in the `/Hardware` directory of this repository).*
+### Frontend (Visualization & Interactivity)
+*   **Frameworks:** React.js (Vite) + Tailwind CSS + Framer Motion.
+*   **Geospatial:** `deck.gl` (WebGL2 / WebGPU spatial rendering framework) + `react-map-gl` (Mapbox GL JS base maps).
+*   **State Management:** Zustand (for reactive, global dashboard state).
+*   **Animations:** Anime.js (for SVG architecture flows) + Framer Motion (for spring-physics layout reveals).
+
+### Backend (Cognitive & Routing Engine)
+*   **Core:** Python 3.11 + FastAPI + WebSockets (for continuous bidirectional telemetry streaming).
+*   **Mathematical Optimization:** PuLP (Python-based MILP solver for deterministic routing).
+*   **Agentic Framework:** LangGraph + LangChain (Strict state-machine agent orchestration).
+*   **LLMs:** OpenAI GPT-4o / GPT-4o-mini (for unstructured parsing and heuristic judgment).
+
+### Hardware Edge Node (IoT)
+*   **Microcontroller:** ESP32-WROOM-32.
+*   **Sensors:** MPU6050 (Accelerometer/Gyroscope) + NEO-6M (GPS) + BME280 (Meteorological Sensor) + VL53L0X (LiDAR/Time-of-Flight).
+*   **Hardware Engineering:** Custom schematics and Gerber files designed in KiCad 8.0.
+*   **CAD Enclosure:** 3D-printed housing parametrically modeled in Autodesk Fusion 360.
+*(Note: Hardware schematics, Gerber files, and CAD deliverables are located in the `/Hardware` directory).*
 
 ---
 
@@ -49,7 +69,7 @@ RailCortex was engineered utilizing deterministic mathematics to ensure the safe
 ### 1. Repository Configuration
 Clone the repository and enter the directory:
 ```bash
-git clone https://github.com/yourusername/RailCortex.git
+git clone https://github.com/PrabhnoorSingh-IITM/RailCortex.git
 cd RailCortex
 ```
 
@@ -82,5 +102,5 @@ npm run dev
 ```
 Navigate to `http://localhost:5173` to access the Digital Twin interface.
 
-### 4. Hardware Node Deployment (Optional)
+### 4. Hardware Node Deployment 
 Navigate to `/Hardware/firmware/RailCortex.ino` and flash the compiled binary to the ESP32 via the Arduino IDE. Modify the Wi-Fi credentials and target WebSocket IP address within the source code to establish a connection with the local FastAPI instance.
