@@ -1,2 +1,8 @@
 .DS_Store
 Docs/*.pdf
+venv/
+__pycache__/
+*.pyc
+.env
+backend/data/railcortex.db
+

@@ -17,5 +17,6 @@ class TelemetryMessage(BaseModel):
     trains: list[TrainTripPayload] | None = None
     emergency_active: bool = False
     weather_active: bool = False
+    live_weather: dict | None = None
     dispatch_plan: dict | None = None
     message: str | None = None

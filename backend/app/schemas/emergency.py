@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -22,7 +21,7 @@ class Location(BaseModel):
 
 
 class EmergencyTriggerRequest(BaseModel):
-    event_type: Literal["DERAILMENT", "COLLISION", "OBSTACLE", "MANUAL"] = "DERAILMENT"
+    event_type: str = "DERAILMENT"
     train_id: str = "RAJ-12345"
     sensor_data: SensorData
     location: Location
@@ -45,5 +44,25 @@ class DispatchPlanResponse(BaseModel):
     allocations: list[dict]
     ambulance_routes: list[dict]
     dispatch_report: str
+    dispatch_report_structured: dict = Field(default_factory=dict)
+    llm_source: str = ""
+    search_radius_used_m: int = 0
     final_dispatch_plan: dict
     errors: list[str] = Field(default_factory=list)
+    incident_id: int | None = None
+
+
+class IncidentSummary(BaseModel):
+    id: int
+    event_type: str
+    train_id: str
+    severity: str
+    casualties: int
+    lat: float
+    lon: float
+    created_at: datetime
+
+
+class IncidentDetail(IncidentSummary):
+    dispatch_plan: dict
+    telemetry_snapshot: dict | None = None

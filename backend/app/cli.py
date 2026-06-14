@@ -1,8 +1,8 @@
 """CLI entry point for running the emergency pipeline without the API server."""
 
-from app.agents.analyzer import analyze
-from app.agents.dispatcher import generate_dispatch
-from app.agents.medical import find_hospitals
+import asyncio
+
+from app.agents.graph import run_emergency_pipeline
 from app.models.emergency_state import EmergencyState
 
 
@@ -17,9 +17,7 @@ async def run_cli():
         obstacle_distance=20,
     )
 
-    state = analyze(state)
-    state = await find_hospitals(state)
-    state = generate_dispatch(state)
+    state = await run_emergency_pipeline(state)
 
     print("=" * 50)
     print("RAILMIND AI EMERGENCY RESPONSE")
@@ -27,13 +25,17 @@ async def run_cli():
     print(f"\nSeverity: {state.severity}")
     print(f"Risk Score: {state.risk_score}")
     print(f"Confidence: {state.confidence}%")
+    print(f"LLM Source: {state.llm_source}")
     print("\nANALYSIS REASONING")
     print("-" * 50)
     for reason in state.reasoning:
         print(f"- {reason}")
     print("\nNearby Hospitals:")
     for idx, hospital in enumerate(state.hospitals, start=1):
-        print(f"{idx}. {hospital['name']}")
+        print(
+            f"{idx}. {hospital['name']} ({hospital.get('source', 'unknown')}, "
+            f"{hospital.get('distance_km', '?')} km)"
+        )
     print("\nPATIENT ALLOCATION")
     print("-" * 50)
     for allocation in state.allocations:
@@ -49,9 +51,12 @@ async def run_cli():
     print(f"Total Ambulances: {state.total_ambulances}")
     print("-" * 50)
     print(state.dispatch_report)
+    if state.errors:
+        print("\nWARNINGS")
+        print("-" * 50)
+        for error in state.errors:
+            print(f"- {error}")
 
 
 if __name__ == "__main__":
-    import asyncio
-
     asyncio.run(run_cli())

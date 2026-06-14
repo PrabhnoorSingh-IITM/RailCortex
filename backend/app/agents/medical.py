@@ -1,39 +1,18 @@
+from __future__ import annotations
+
+import json
 import math
+from pathlib import Path
 
 import httpx
 
 from app.config import get_settings
 from app.models.emergency_state import EmergencyState
 
-FALLBACK_HOSPITALS = [
-    {
-        "name": "GSVM Medical College",
-        "city": "Kanpur",
-        "capacity": 25,
-        "ambulances": 6,
-        "trauma_level": 1,
-        "lat": 26.4750,
-        "lon": 80.3315,
-    },
-    {
-        "name": "Lala Lajpat Rai Hospital",
-        "city": "Kanpur",
-        "capacity": 20,
-        "ambulances": 5,
-        "trauma_level": 1,
-        "lat": 26.4490,
-        "lon": 80.3500,
-    },
-    {
-        "name": "Regency Hospital",
-        "city": "Kanpur",
-        "capacity": 15,
-        "ambulances": 4,
-        "trauma_level": 2,
-        "lat": 26.4300,
-        "lon": 80.3200,
-    },
-]
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+FALLBACK_HOSPITALS: list[dict] = json.loads(
+    (DATA_DIR / "hospitals_fallback.json").read_text(encoding="utf-8")
+)
 
 
 def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
@@ -43,6 +22,31 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     dlambda = math.radians(lon2 - lon1)
     a = math.sin(dphi / 2) ** 2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda / 2) ** 2
     return 2 * radius * math.asin(math.sqrt(a))
+
+
+def _estimate_capacity(tags: dict, distance_km: float) -> int:
+    if beds := tags.get("beds"):
+        try:
+            return max(5, int(beds))
+        except (TypeError, ValueError):
+            pass
+
+    if tags.get("healthcare") == "hospital" and tags.get("emergency") == "yes":
+        return 35
+    if tags.get("amenity") == "hospital" and tags.get("operator"):
+        return 28
+    if tags.get("healthcare:speciality") == "trauma":
+        return 30
+
+    return max(10, 25 - int(distance_km))
+
+
+def _estimate_ambulances(capacity: int, distance_km: float, tags: dict) -> int:
+    if tags.get("emergency") == "yes":
+        base = max(4, capacity // 5)
+    else:
+        base = max(2, capacity // 8)
+    return max(1, base - int(distance_km // 5))
 
 
 def _parse_osm_elements(elements: list[dict], crash_lat: float, crash_lon: float) -> list[dict]:
@@ -64,17 +68,19 @@ def _parse_osm_elements(elements: list[dict], crash_lat: float, crash_lon: float
             continue
 
         distance_km = _haversine_km(crash_lat, crash_lon, lat, lon)
+        capacity = _estimate_capacity(tags, distance_km)
         hospitals.append(
             {
                 "name": name,
-                "city": tags.get("addr:city", "Unknown"),
-                "capacity": 20,
-                "ambulances": max(2, int(8 - distance_km)),
+                "city": tags.get("addr:city", tags.get("addr:state", "Unknown")),
+                "capacity": capacity,
+                "ambulances": _estimate_ambulances(capacity, distance_km, tags),
                 "trauma_level": 1 if tags.get("emergency") == "yes" else 2,
                 "lat": lat,
                 "lon": lon,
                 "distance_km": round(distance_km, 2),
                 "source": "osm",
+                "capacity_source": "osm_tags" if tags.get("beds") else "estimated",
             }
         )
 
@@ -95,10 +101,27 @@ async def fetch_hospitals_from_osm(lat: float, lon: float, radius_m: int) -> lis
         response = await client.post(
             settings.overpass_api_url,
             data={"data": query},
+            headers={"User-Agent": "RailCortex/1.0 emergency-response"},
         )
         response.raise_for_status()
         payload = response.json()
         return _parse_osm_elements(payload.get("elements", []), lat, lon)
+
+
+def _geo_aware_fallback(crash_lat: float, crash_lon: float, max_results: int = 5) -> list[dict]:
+    ranked = []
+    for hospital in FALLBACK_HOSPITALS:
+        distance_km = _haversine_km(crash_lat, crash_lon, hospital["lat"], hospital["lon"])
+        ranked.append(
+            {
+                **hospital,
+                "distance_km": round(distance_km, 2),
+                "source": "geo_fallback",
+                "capacity_source": "static_registry",
+            }
+        )
+    ranked.sort(key=lambda h: h["distance_km"])
+    return ranked[:max_results]
 
 
 def _allocate_patients(state: EmergencyState, hospitals: list[dict]) -> list[dict]:
@@ -128,30 +151,51 @@ def _allocate_patients(state: EmergencyState, hospitals: list[dict]) -> list[dic
     return allocations
 
 
-async def find_hospitals(state: EmergencyState) -> EmergencyState:
+async def find_hospitals(state: EmergencyState, radius_m: int | None = None) -> EmergencyState:
     settings = get_settings()
+    search_radii = [radius_m] if radius_m else [settings.hospital_search_radii_m[0]]
     hospitals: list[dict] = []
+    last_error: str | None = None
 
-    try:
-        hospitals = await fetch_hospitals_from_osm(
-            state.lat,
-            state.lon,
-            settings.hospital_search_radius_m,
-        )
-    except Exception as exc:
-        state.errors.append(f"OSM lookup failed: {exc}")
-
-    if not hospitals:
-        hospitals = [
-            {
-                **h,
-                "distance_km": round(_haversine_km(state.lat, state.lon, h["lat"], h["lon"]), 2),
-                "source": "fallback",
-            }
-            for h in FALLBACK_HOSPITALS
-        ]
-        hospitals.sort(key=lambda h: h["distance_km"])
+    for radius in search_radii:
+        try:
+            hospitals = await fetch_hospitals_from_osm(state.lat, state.lon, radius)
+            if hospitals:
+                state.search_radius_used_m = radius
+                break
+            last_error = f"No hospitals found within {radius / 1000:.0f} km"
+        except Exception as exc:
+            last_error = f"OSM lookup failed at {radius / 1000:.0f} km: {exc}"
+            state.errors.append(last_error)
 
     state.hospitals = hospitals
-    state.allocations = _allocate_patients(state, hospitals)
+    state.allocations = _allocate_patients(state, hospitals) if hospitals else []
+    return state
+
+
+async def expand_hospital_search(state: EmergencyState) -> EmergencyState:
+    """LangGraph node: widen search when initial medical lookup returned nothing."""
+    if state.hospitals:
+        return state
+
+    settings = get_settings()
+    used = state.search_radius_used_m or settings.hospital_search_radii_m[0]
+    wider_radii = [r for r in settings.hospital_search_radii_m if r > used]
+
+    for radius in wider_radii:
+        try:
+            hospitals = await fetch_hospitals_from_osm(state.lat, state.lon, radius)
+            if hospitals:
+                state.hospitals = hospitals
+                state.search_radius_used_m = radius
+                state.allocations = _allocate_patients(state, hospitals)
+                state.errors.append(f"Hospital search expanded to {radius / 1000:.0f} km radius")
+                return state
+        except Exception as exc:
+            state.errors.append(f"Expanded OSM lookup failed at {radius / 1000:.0f} km: {exc}")
+
+    state.hospitals = _geo_aware_fallback(state.lat, state.lon)
+    state.search_radius_used_m = wider_radii[-1] if wider_radii else used
+    state.allocations = _allocate_patients(state, state.hospitals)
+    state.errors.append("Expanded search exhausted; using geo-aware national hospital registry")
     return state

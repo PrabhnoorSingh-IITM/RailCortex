@@ -4,7 +4,7 @@ from langgraph.graph import END, StateGraph
 
 from app.agents.analyzer import analyze
 from app.agents.dispatcher import generate_dispatch
-from app.agents.medical import find_hospitals
+from app.agents.medical import expand_hospital_search, find_hospitals
 from app.agents.route_planner import plan_routes
 from app.models.emergency_state import EmergencyState
 
@@ -21,6 +21,17 @@ def _analyzer_node(graph_state: GraphState) -> GraphState:
 async def _medical_node(graph_state: GraphState) -> GraphState:
     emergency_state = await find_hospitals(graph_state["state"])
     return {"state": emergency_state}
+
+
+async def _expand_medical_node(graph_state: GraphState) -> GraphState:
+    emergency_state = await expand_hospital_search(graph_state["state"])
+    return {"state": emergency_state}
+
+
+def _needs_expanded_search(graph_state: GraphState) -> str:
+    if graph_state["state"].hospitals:
+        return "route_planner"
+    return "expand_medical"
 
 
 async def _route_planner_node(graph_state: GraphState) -> GraphState:
@@ -46,8 +57,11 @@ def _resource_node(graph_state: GraphState) -> GraphState:
         "allocations": emergency_state.allocations,
         "ambulance_routes": emergency_state.ambulance_routes,
         "dispatch_report": emergency_state.dispatch_report,
+        "dispatch_report_structured": emergency_state.dispatch_report_structured,
+        "llm_source": emergency_state.llm_source,
         "reasoning": emergency_state.reasoning,
         "errors": emergency_state.errors,
+        "search_radius_used_m": emergency_state.search_radius_used_m,
     }
     return {"state": emergency_state}
 
@@ -57,12 +71,21 @@ def build_emergency_graph():
 
     graph.add_node("analyzer", _analyzer_node)
     graph.add_node("medical", _medical_node)
+    graph.add_node("expand_medical", _expand_medical_node)
     graph.add_node("route_planner", _route_planner_node)
     graph.add_node("resource", _resource_node)
 
     graph.set_entry_point("analyzer")
     graph.add_edge("analyzer", "medical")
-    graph.add_edge("medical", "route_planner")
+    graph.add_conditional_edges(
+        "medical",
+        _needs_expanded_search,
+        {
+            "expand_medical": "expand_medical",
+            "route_planner": "route_planner",
+        },
+    )
+    graph.add_edge("expand_medical", "route_planner")
     graph.add_edge("route_planner", "resource")
     graph.add_edge("resource", END)
 

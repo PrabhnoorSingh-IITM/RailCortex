@@ -23,6 +23,9 @@ class EmergencyState:
     ambulance_routes: list = field(default_factory=list)
 
     dispatch_report: str = ""
+    dispatch_report_structured: dict = field(default_factory=dict)
+    llm_source: str = ""
+    search_radius_used_m: int = 0
     final_dispatch_plan: dict = field(default_factory=dict)
     errors: list = field(default_factory=list)
 
@@ -46,6 +49,9 @@ class EmergencyState:
             "allocations": self.allocations,
             "ambulance_routes": self.ambulance_routes,
             "dispatch_report": self.dispatch_report,
+            "dispatch_report_structured": self.dispatch_report_structured,
+            "llm_source": self.llm_source,
+            "search_radius_used_m": self.search_radius_used_m,
             "final_dispatch_plan": self.final_dispatch_plan,
             "errors": self.errors,
             "risk_score": self.risk_score,

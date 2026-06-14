@@ -38,6 +38,7 @@ class TelemetrySimulator:
     trains: list[TrainState] = field(default_factory=list)
     weather_active: bool = False
     last_optimization: dict = field(default_factory=dict)
+    last_live_weather: dict | None = None
 
     def load_from_static_data(self) -> None:
         timetable = load_json("timetable.json")
@@ -100,6 +101,7 @@ class TelemetrySimulator:
     def reset(self) -> None:
         self.weather_active = False
         self.last_optimization = {}
+        self.last_live_weather = None
         self.load_from_static_data()
 
 

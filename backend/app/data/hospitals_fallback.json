@@ -1,0 +1,22 @@
+[
+  {"name": "GSVM Medical College", "city": "Kanpur", "capacity": 25, "ambulances": 6, "trauma_level": 1, "lat": 26.4750, "lon": 80.3315},
+  {"name": "Lala Lajpat Rai Hospital", "city": "Kanpur", "capacity": 20, "ambulances": 5, "trauma_level": 1, "lat": 26.4490, "lon": 80.3500},
+  {"name": "AIIMS Delhi", "city": "New Delhi", "capacity": 50, "ambulances": 12, "trauma_level": 1, "lat": 28.5672, "lon": 77.2100},
+  {"name": "Safdarjung Hospital", "city": "New Delhi", "capacity": 40, "ambulances": 10, "trauma_level": 1, "lat": 28.5689, "lon": 77.2090},
+  {"name": "KEM Hospital", "city": "Mumbai", "capacity": 45, "ambulances": 11, "trauma_level": 1, "lat": 19.0019, "lon": 72.8426},
+  {"name": "Lilavati Hospital", "city": "Mumbai", "capacity": 30, "ambulances": 8, "trauma_level": 2, "lat": 19.0524, "lon": 72.8280},
+  {"name": "Apollo Hospitals", "city": "Chennai", "capacity": 35, "ambulances": 9, "trauma_level": 1, "lat": 13.0569, "lon": 80.2588},
+  {"name": "Rajiv Gandhi Government General Hospital", "city": "Chennai", "capacity": 40, "ambulances": 10, "trauma_level": 1, "lat": 13.0827, "lon": 80.2707},
+  {"name": "NRS Medical College", "city": "Kolkata", "capacity": 35, "ambulances": 8, "trauma_level": 1, "lat": 22.5626, "lon": 88.3639},
+  {"name": "SSKM Hospital", "city": "Kolkata", "capacity": 30, "ambulances": 7, "trauma_level": 1, "lat": 22.5376, "lon": 88.3434},
+  {"name": "King George's Medical University", "city": "Lucknow", "capacity": 38, "ambulances": 9, "trauma_level": 1, "lat": 26.8467, "lon": 80.9462},
+  {"name": "Civil Hospital Ahmedabad", "city": "Ahmedabad", "capacity": 32, "ambulances": 7, "trauma_level": 1, "lat": 23.0225, "lon": 72.5714},
+  {"name": "Osmania General Hospital", "city": "Hyderabad", "capacity": 36, "ambulances": 8, "trauma_level": 1, "lat": 17.3850, "lon": 78.4867},
+  {"name": "SMS Medical College", "city": "Jaipur", "capacity": 34, "ambulances": 8, "trauma_level": 1, "lat": 26.9124, "lon": 75.7873},
+  {"name": "BJ Medical College", "city": "Pune", "capacity": 30, "ambulances": 7, "trauma_level": 1, "lat": 18.5204, "lon": 73.8567},
+  {"name": "Victoria Hospital", "city": "Bangalore", "capacity": 38, "ambulances": 9, "trauma_level": 1, "lat": 12.9634, "lon": 77.5855},
+  {"name": "Government Medical College", "city": "Nagpur", "capacity": 28, "ambulances": 6, "trauma_level": 2, "lat": 21.1458, "lon": 79.0882},
+  {"name": "Patna Medical College", "city": "Patna", "capacity": 32, "ambulances": 7, "trauma_level": 1, "lat": 25.5941, "lon": 85.1376},
+  {"name": "Government Medical College", "city": "Chandigarh", "capacity": 30, "ambulances": 7, "trauma_level": 1, "lat": 30.7333, "lon": 76.7794},
+  {"name": "Government Medical College", "city": "Thiruvananthapuram", "capacity": 28, "ambulances": 6, "trauma_level": 2, "lat": 8.5241, "lon": 76.9366}
+]

@@ -1,12 +1,13 @@
-import numpy as np
-import pandas as pd
-
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import RandomForestRegressor
-
-from sklearn.model_selection import train_test_split
+import os
 
 import joblib
+import numpy as np
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
+BASE_DIR = os.path.dirname(__file__)
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(MODELS_DIR, exist_ok=True)
 
 np.random.seed(42)
 
@@ -103,12 +104,12 @@ casualty_model.fit(
 
 joblib.dump(
     severity_model,
-    "severity_model.pkl"
+    os.path.join(MODELS_DIR, "severity_model.pkl"),
 )
 
 joblib.dump(
     casualty_model,
-    "casualty_model.pkl"
+    os.path.join(MODELS_DIR, "casualty_model.pkl"),
 )
 
 print("Models saved successfully.")
