@@ -87,11 +87,11 @@ export default function MapCanvas() {
 
   const center = [26.4499, 80.3319]; // Kanpur approx
 
-  // Convert GeoJSON routes to Leaflet format
+  // Convert ambulance routes to Leaflet format
   const ambulancePaths = showAmbulances && dispatchPlan && dispatchPlan.ambulance_routes ? 
     dispatchPlan.ambulance_routes.map(route => {
-      // route.geometry.coordinates is typically [lon, lat][]
-      return route.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+      // route.path is [lon, lat][], Leaflet wants [lat, lon]
+      return (route.path || []).map(coord => [coord[1], coord[0]]);
     }) : [];
 
   return (

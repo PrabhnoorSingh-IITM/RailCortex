@@ -124,6 +124,18 @@ class TelemetrySimulator:
 
         return rerouted
 
+    def step(self) -> None:
+        """Advance simulation by one tick (called by the broadcast loop)."""
+        self.tick()
+
+    def get_current_state(self) -> dict:
+        """Return a snapshot of the current simulation state for broadcasting."""
+        return {
+            "trains": [train.to_payload() for train in self.trains],
+            "weather_active": self.weather_active,
+            "last_optimization": self.last_optimization,
+        }
+
     def reset(self) -> None:
         self.weather_active = False
         self.last_optimization = {}

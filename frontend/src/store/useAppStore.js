@@ -27,8 +27,11 @@ const useAppStore = create((set, get) => ({
     // Prevent duplicate connections
     if (get().wsInstance) return;
 
-    const wsBaseUrl = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8000';
-    const ws = new WebSocket(`${wsBaseUrl}/ws/network-telemetry`);
+    // Use relative URL so the Vite proxy handles routing to the backend.
+    // Falls back to explicit ws://localhost:8000 only if VITE_WS_BASE_URL is set.
+    const wsBase = import.meta.env.VITE_WS_BASE_URL || 
+      `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`;
+    const ws = new WebSocket(`${wsBase}/ws/network-telemetry`);
 
     ws.onopen = () => {
       set({ wsConnected: true, wsInstance: ws });
@@ -47,19 +50,20 @@ const useAppStore = create((set, get) => ({
             });
             break;
           case 'EMERGENCY_STATE':
-            set({ isEmergencyMode: data.active });
-            if (!data.active) {
-                set({ dispatchPlan: null }); // Clear plan on reset
+            set({ isEmergencyMode: data.emergency_active });
+            if (!data.emergency_active) {
+              set({ dispatchPlan: null, isSimulating: false }); // Clear plan and weather on reset
             }
             break;
           case 'WEATHER_ALERT':
             set({ 
               weatherMessage: data.message,
-              trains: data.trains || [] 
+              isSimulating: true,
+              trains: data.trains || get().trains,  // keep existing trains if none sent
             });
             break;
           case 'DISPATCH_PLAN':
-            set({ dispatchPlan: data.data });
+            set({ dispatchPlan: data.dispatch_plan });
             break;
           default:
             console.log('Unknown message type:', data.type);

@@ -180,7 +180,6 @@ async def fetch_hospitals_from_osm(lat: float, lon: float, radius_m: int) -> lis
                 settings.overpass_api_url,
                 data={"data": query},
                 headers={"User-Agent": "RailCortex/1.0 emergency-response"},
-                retry=3,  # Automatic retries
             )
             response.raise_for_status()
             payload = response.json()
@@ -317,4 +316,54 @@ async def find_hospitals(state: EmergencyState) -> EmergencyState:
     state.allocations = []
     state.errors.append("CRITICAL: Unable to locate hospitals; check network/OSM API status")
     
+    return state
+
+
+async def expand_hospital_search(state: EmergencyState) -> EmergencyState:
+    """
+    Called by the LangGraph pipeline when the initial hospital search returned
+    no results.  Attempts a very wide OSM query (150 km), then falls back to
+    the geo-aware static registry.  Updates state.hospitals and state.allocations
+    in place.
+    """
+    settings = get_settings()
+    EXPANDED_RADIUS_M = max(settings.hospital_search_radii_m[-1], 150_000)
+
+    logger.info(
+        f"Expanding hospital search to {EXPANDED_RADIUS_M / 1000:.0f} km "
+        f"for ({state.lat}, {state.lon})"
+    )
+
+    try:
+        hospitals = await fetch_hospitals_from_osm(state.lat, state.lon, EXPANDED_RADIUS_M)
+        if hospitals:
+            state.hospitals = hospitals
+            state.search_radius_used_m = EXPANDED_RADIUS_M
+            state.allocations = _allocate_patients(state, hospitals)
+            logger.info(
+                f"Expanded search found {len(hospitals)} hospitals at "
+                f"{EXPANDED_RADIUS_M / 1000:.0f} km radius"
+            )
+            return state
+    except Exception as exc:
+        logger.error(f"Expanded OSM search failed: {exc}")
+        state.errors.append(f"Expanded OSM search failed: {str(exc)[:80]}")
+
+    # Last resort: static registry
+    try:
+        hospitals = _geo_aware_fallback(state.lat, state.lon, max_results=5)
+        if hospitals:
+            state.hospitals = hospitals
+            state.search_radius_used_m = EXPANDED_RADIUS_M
+            state.allocations = _allocate_patients(state, hospitals)
+            state.errors.append(
+                "OSM unavailable for expanded search; using static national hospital registry"
+            )
+            return state
+    except Exception as exc:
+        logger.error(f"Expanded fallback registry failed: {exc}")
+        state.errors.append(f"Expanded fallback hospital lookup failed: {str(exc)[:80]}")
+
+    logger.critical("Expanded hospital search found nothing")
+    state.errors.append("CRITICAL: Expanded search also failed; no hospitals allocated")
     return state
