@@ -22,20 +22,26 @@ def solve_train_rerouting(
     path_options: dict[str, list[str]] = {}
 
     timetable_data = _load_timetable_entries()
+    
+    # Map base path_id to its alternates from timetable
+    base_options = {}
     for entry in timetable_data:
-        path_options[entry["train_id"]] = [
+        base_options[entry["default_path_id"]] = [
             entry["default_path_id"],
             entry.get("alternate_path_id", entry["default_path_id"]),
         ]
 
+    for t in timetable_trains:
+        path_options[t.train_id] = base_options.get(t.path_id, [t.path_id, t.path_id])
+
     problem = pulp.LpProblem("RailMind_Train_Platforming", pulp.LpMinimize)
 
     use_alt = {
-        train_id: pulp.LpVariable(f"alt_{train_id}", cat="Binary")
+        train_id: pulp.LpVariable(f"alt_{train_id.replace('-', '_')}", cat="Binary")
         for train_id in train_ids
     }
     delay_vars = {
-        train_id: pulp.LpVariable(f"delay_{train_id}", lowBound=0, cat="Continuous")
+        train_id: pulp.LpVariable(f"delay_{train_id.replace('-', '_')}", lowBound=0, cat="Continuous")
         for train_id in train_ids
     }
 
@@ -77,10 +83,10 @@ def solve_train_rerouting(
     delay_map: dict[str, float] = {}
     total_delay = 0.0
 
-    for entry in timetable_data:
-        train_id = entry["train_id"]
+    for t in timetable_trains:
+        train_id = t.train_id
         alt_selected = bool(pulp.value(use_alt[train_id]))
-        path_id = entry["alternate_path_id"] if alt_selected else entry["default_path_id"]
+        path_id = path_options[train_id][1] if alt_selected else path_options[train_id][0]
         assignments[train_id] = path_id
         delay_val = float(pulp.value(delay_vars[train_id]) or 0)
         delay_map[train_id] = delay_val

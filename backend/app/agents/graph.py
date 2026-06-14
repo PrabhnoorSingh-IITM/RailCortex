@@ -48,6 +48,7 @@ def _resource_node(graph_state: GraphState) -> GraphState:
         "casualties": emergency_state.casualties,
         "priority_level": emergency_state.priority_level,
         "response_time": emergency_state.response_time,
+        "peak_g_force": emergency_state.peak_g_force,
         "total_ambulances": emergency_state.total_ambulances,
         "incident_location": {
             "lat": emergency_state.lat,

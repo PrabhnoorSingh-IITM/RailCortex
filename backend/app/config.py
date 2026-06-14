@@ -13,10 +13,16 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     mappls_api_key: str = ""
     mapbox_access_token: str = ""
+<<<<<<< HEAD
     openweather_api_key: str = ""
     api_key: str = ""
 
     database_url: str = "sqlite+aiosqlite:///./data/railcortex.db"
+=======
+    
+    rapidapi_key: str = ""
+    rapidapi_host: str = "indianrailapi.p.rapidapi.com"
+>>>>>>> 6d81d76320a04b27dc1517fb2e706aecca429b31
 
     overpass_api_url: str = "https://overpass-api.de/api/interpreter"
     mappls_routes_url: str = "https://apis.mappls.com/advancedmaps/v1/route_adv/driving"
