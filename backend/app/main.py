@@ -33,12 +33,8 @@ async def _telemetry_broadcast_loop() -> None:
                         type="TELEMETRY",
                         trains=state["trains"],
                         emergency_active=False,
-<<<<<<< HEAD
                         weather_active=telemetry_simulator.weather_active,
                         live_weather=telemetry_simulator.last_live_weather,
-=======
-                        weather_active=state["weather_active"],
->>>>>>> 6d81d76320a04b27dc1517fb2e706aecca429b31
                     )
                 )
         except Exception as e:
