@@ -88,7 +88,7 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     application = FastAPI(
-        title="RailMind AI Backend",
+        title="RailCortex Backend",
         description="Digital twin telemetry + emergency multi-agent response API",
         version="1.1.0",
         lifespan=lifespan,

@@ -20,7 +20,7 @@ async def run_cli():
     state = await run_emergency_pipeline(state)
 
     print("=" * 50)
-    print("RAILMIND AI EMERGENCY RESPONSE")
+    print("RAILCORTEX EMERGENCY RESPONSE")
     print("=" * 50)
     print(f"\nSeverity: {state.severity}")
     print(f"Risk Score: {state.risk_score}")

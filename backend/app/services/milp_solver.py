@@ -34,7 +34,7 @@ def solve_train_rerouting(
     for t in timetable_trains:
         path_options[t.train_id] = base_options.get(t.path_id, [t.path_id, t.path_id])
 
-    problem = pulp.LpProblem("RailMind_Train_Platforming", pulp.LpMinimize)
+    problem = pulp.LpProblem("RailCortex_Train_Platforming", pulp.LpMinimize)
 
     use_alt = {
         train_id: pulp.LpVariable(f"alt_{train_id.replace('-', '_')}", cat="Binary")

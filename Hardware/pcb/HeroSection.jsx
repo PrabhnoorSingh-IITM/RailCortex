@@ -85,12 +85,15 @@ export default function HeroSection() {
 
         {/* Call to Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 hero-buttons opacity-0">
-          <a href="#architecture" className="px-8 py-4 bg-primary hover:bg-primary-hover text-white font-bold rounded shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all flex items-center group">
+          <a href="#architecture" className="px-6 py-3 bg-primary hover:bg-primary-hover text-white font-bold rounded shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all flex items-center group">
             Explore Architecture
             <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
           </a>
-          <a href="#problem" className="px-8 py-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded transition-all">
-            The Problem
+          <a href="https://drive.google.com/file/d/1XESk1WhmcyDZzcQoyr-ekqZNMPGzPJtn/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded transition-all flex items-center">
+            Watch Demo Video
+          </a>
+          <a href="https://drive.google.com/file/d/1N0aOrDR9K62Z9wJUEEKm0sZDDuzc8ooX/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white font-bold rounded transition-all flex items-center">
+            View Pitch Deck
           </a>
         </div>
       </div>

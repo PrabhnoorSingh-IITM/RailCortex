@@ -8,6 +8,11 @@
   <img src="https://img.shields.io/badge/AI-LangGraph-F39C12?style=for-the-badge" alt="LangGraph" />
 </p>
 
+<p align="center">
+  <a href="https://drive.google.com/file/d/1XESk1WhmcyDZzcQoyr-ekqZNMPGzPJtn/view?usp=sharing"><strong>Watch Demo Video</strong></a> | 
+  <a href="https://drive.google.com/file/d/1N0aOrDR9K62Z9wJUEEKm0sZDDuzc8ooX/view?usp=sharing"><strong>View Pitch Deck (PPT)</strong></a>
+</p>
+
 RailCortex is an autonomous, dual-mode Cyber-Physical System (CPS) engineered to modernize transit operations. It replaces passive tracking with an active cognitive network, bridging the gap between **deterministic mathematical optimization**, **custom physical hardware**, and **Agentic AI**.
 
 In its primary state, RailCortex operates as a **Level 4 Digital Twin**. Powered by a high-performance WebGL rendering engine, it visualizes spatial datasets at 60fps. Rather than relying on human dispatchers to resolve platform conflicts, the system ingests live edge telemetry and utilizes **Mixed-Integer Linear Programming (MILP)** via PuLP to deterministically reroute trains, absorbing localized delays before they cascade across the grid.

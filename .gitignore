@@ -1,5 +1,7 @@
 .DS_Store
 Docs/*.pdf
+Docs/RailCortex*.md
+Docs/RailMind*.pdf
 venv/
 __pycache__/
 *.pyc

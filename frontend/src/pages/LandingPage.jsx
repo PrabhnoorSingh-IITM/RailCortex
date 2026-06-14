@@ -1,6 +1,6 @@
 import React from 'react';
 import NavBar from '../components/landing/NavBar';
-import HeroSection from '../components/landing/HeroSection';
+import HeroSection from '../../../Hardware/pcb/HeroSection';
 import ProblemScroll from '../components/landing/ProblemScroll';
 import DualModeReveal from '../components/landing/DualModeReveal';
 import ArchitecturePreview from '../components/landing/ArchitecturePreview';
